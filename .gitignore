@@ -14,3 +14,7 @@ __pycache__/
 # project
 /models/
 /datasets/
+.vs/VSWorkspaceState.json
+.vs/ProjectSettings.json
+.vs/Video-Summarization/v16/.suo
+*.sqlite

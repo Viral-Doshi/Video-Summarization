@@ -9,7 +9,7 @@ from anchor_free.dsnet_af import DSNetAF
 from helpers import data_helper, vsumm_helper, bbox_helper
 from modules.model_zoo import get_model
 
-logger = logging.getLogger()
+# logger = logging.getLogger()
 
 
 def evaluate(model, val_loader, nms_thresh, device):
@@ -40,7 +40,6 @@ def evaluate(model, val_loader, nms_thresh, device):
     print(stats.fscore, stats.diversity)
     return stats.fscore, stats.diversity
 
-# python evaluate.py anchor-based --model-dir ../models/pretrain_ab_basic/ --splits ../splits/tvsum.yml ../splits/summe.yml
 
 class Parameter:
     def __init__(self):
@@ -91,40 +90,37 @@ class Parameter:
 
 
 
-def main():
-    args = Parameter()
-    # args = init_helper.get_arguments()
-    # init_helper.init_logger(args.model_dir, args.log_file)
-    # init_helper.set_random_seed(args.seed)
-    # logger.info(vars(args))
+args = Parameter()
+# args = init_helper.get_arguments()
+# init_helper.init_logger(args.model_dir, args.log_file)
+# init_helper.set_random_seed(args.seed)
+# logger.info(vars(args))
 
-    model = args.get_model()
-    model = model.eval().to(args.device)
+model = args.get_model()
+model = model.eval().to(args.device)
 
-    for split_path in args.splits:
-        split_path = Path(split_path)
-        splits = data_helper.load_yaml(split_path)
+for split_path in args.splits:
+    split_path = Path(split_path)
+    splits = data_helper.load_yaml(split_path)
 
-        stats = data_helper.AverageMeter('fscore', 'diversity')
+    stats = data_helper.AverageMeter('fscore', 'diversity')
 
-        for split_idx, split in enumerate(splits):
-            ckpt_path = data_helper.get_ckpt_path(args.model_dir, split_path, split_idx)
-            state_dict = torch.load(str(ckpt_path),
-                                    map_location=lambda storage, loc: storage)
-            model.load_state_dict(state_dict)
+    for split_idx, split in enumerate(splits):
+        ckpt_path = data_helper.get_ckpt_path(args.model_dir, split_path, split_idx)
+        state_dict = torch.load(str(ckpt_path),
+                                map_location=lambda storage, loc: storage)
+        model.load_state_dict(state_dict)
 
-            val_set = data_helper.VideoDataset(split['test_keys'])
-            val_loader = data_helper.DataLoader(val_set, shuffle=False)
+        val_set = data_helper.VideoDataset(split['test_keys'])
+        val_loader = data_helper.DataLoader(val_set, shuffle=False)
 
-            fscore, diversity = evaluate(model, val_loader, args.nms_thresh, args.device)
-            stats.update(fscore=fscore, diversity=diversity)
+        fscore, diversity = evaluate(model, val_loader, args.nms_thresh, args.device)
+        stats.update(fscore=fscore, diversity=diversity)
 
-            logger.info(f'{split_path.stem} split {split_idx}: diversity: '
-                        f'{diversity:.4f}, F-score: {fscore:.4f}')
+        logger.info(f'{split_path.stem} split {split_idx}: diversity: '
+                    f'{diversity:.4f}, F-score: {fscore:.4f}')
 
-        logger.info(f'{split_path.stem}: diversity: {stats.diversity:.4f}, '
-                    f'F-score: {stats.fscore:.4f}')
+    logger.info(f'{split_path.stem}: diversity: {stats.diversity:.4f}, '
+                f'F-score: {stats.fscore:.4f}')
 
 
-if __name__ == '__main__':
-    main()
