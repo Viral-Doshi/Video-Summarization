@@ -1,0 +1,12 @@
+tqdm==4.61.0
+h5py==3.1.0
+ortools==8.0.8283
+pyyaml==5.4.1
+numpy==1.19.5
+opencv-python==4.5.2.54
+torch
+torchvision
+torch-scatter
+torch-sparse
+torch-cluster
+torch-geometric
