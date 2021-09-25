@@ -37,7 +37,6 @@ def evaluate(model, val_loader, nms_thresh, device):
             diversity = vsumm_helper.get_summ_diversity(pred_summ, seq)
             stats.update(fscore=fscore, diversity=diversity)
 
-    print(stats.fscore, stats.diversity)
     return stats.fscore, stats.diversity
 
 
@@ -117,10 +116,10 @@ for split_path in args.splits:
         fscore, diversity = evaluate(model, val_loader, args.nms_thresh, args.device)
         stats.update(fscore=fscore, diversity=diversity)
 
-        logger.info(f'{split_path.stem} split {split_idx}: diversity: '
+        print(f'{split_path.stem} split {split_idx}: diversity: '
                     f'{diversity:.4f}, F-score: {fscore:.4f}')
 
-    logger.info(f'{split_path.stem}: diversity: {stats.diversity:.4f}, '
+    print(f'{split_path.stem}: diversity: {stats.diversity:.4f}, '
                 f'F-score: {stats.fscore:.4f}')
 
 
