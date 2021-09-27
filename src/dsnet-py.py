@@ -18,7 +18,7 @@ class DataHelper:
         split_path = Path(split_path)
         return Path(model_dir) / 'checkpoint' / f'{split_path.name}.{split_index}.pt'
 
-class AverageMeter(object):
+class AverageMeter:
     def __init__(self, *keys):
         self.totals = {key: 0.0 for key in keys}
         self.counts = {key: 0 for key in keys}
@@ -214,7 +214,7 @@ class Parameter:
         else:
             print(f'Invalid model type {self.model_type}')
 
-class VideoDataset(object):
+class VideoDataset:
     def __init__(self, keys):
         self.keys = keys
         self.datasets = VideoDataset.get_datasets(keys)
@@ -249,7 +249,7 @@ class VideoDataset(object):
         datasets = {path: h5py.File(path, 'r') for path in dataset_paths}
         return datasets
 
-class DataLoader(object):
+class DataLoader:
     def __init__(self, dataset: VideoDataset, shuffle: bool):
         self.dataset = dataset
         self.shuffle = shuffle
