@@ -11,7 +11,7 @@ import yaml
 class VideoDataset(object):
     def __init__(self, keys: List[str]):
         self.keys = keys
-        self.datasets = self.get_datasets(keys)
+        self.datasets = VideoDataset.get_datasets(keys)
 
     def __getitem__(self, index):
         key = self.keys[index]
@@ -38,7 +38,7 @@ class VideoDataset(object):
     def __len__(self):
         return len(self.keys)
 
-    @staticmethod
+    # @staticmethod
     def get_datasets(keys: List[str]) -> Dict[str, h5py.File]:
         dataset_paths = {str(Path(key).parent) for key in keys}
         datasets = {path: h5py.File(path, 'r') for path in dataset_paths}
@@ -67,7 +67,7 @@ class DataLoader(object):
 
 
 class AverageMeter(object):
-    def __init__(self, *keys: str):
+    def __init__(self, *keys):
         self.totals = {key: 0.0 for key in keys}
         self.counts = {key: 0 for key in keys}
 
@@ -78,6 +78,7 @@ class AverageMeter(object):
             self.counts[key] += 1
 
     def __getattr__(self, attr: str) -> float:
+        print("Hi")
         self._check_attr(attr)
         total = self.totals[attr]
         count = self.counts[attr]
