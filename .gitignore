@@ -18,3 +18,4 @@ __pycache__/
 .vs/ProjectSettings.json
 .vs/Video-Summarization/v16/.suo
 *.sqlite
+src/.ipynb_checkpoints/dsnet-nb-checkpoint.ipynb

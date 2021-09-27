@@ -2,8 +2,7 @@ from anchor_based.dsnet import DSNet
 from anchor_free.dsnet_af import DSNetAF
 
 
-def get_anchor_based(base_model, num_feature, num_hidden, anchor_scales,
-                     num_head, **kwargs):
+def get_anchor_based(base_model, num_feature, num_hidden, anchor_scales, num_head, **kwargs):
     return DSNet(base_model, num_feature, num_hidden, anchor_scales, num_head)
 
 
