@@ -34,26 +34,14 @@ class AverageMeter:
         return total / count if count else 0.0
 
 class AnchorHelper:
-    def get_anchors(seq_len: int, scales: List[int]):
-        """Generate all multi-scale anchors for a sequence in center-width format.
-
-        :param seq_len: Sequence length.
-        :param scales: List of bounding box widths.
-        :return: All anchors in center-width format.
-        """
+    def get_anchors(seq_len, scales):
         anchors = np.zeros((seq_len, len(scales), 2), dtype=np.int32)
         for pos in range(seq_len):
             for scale_idx, scale in enumerate(scales):
                 anchors[pos][scale_idx] = [pos, scale]
         return anchors
 
-    def offset2bbox(offsets: np.ndarray, anchors: np.ndarray):
-        """Convert predicted offsets to CW bounding boxes.
-
-        :param offsets: Predicted offsets.
-        :param anchors: Sequence anchors.
-        :return: Predicted bounding boxes.
-        """
+    def offset2bbox(offsets, anchors):
         offsets = offsets.reshape(-1, 2)
         anchors = anchors.reshape(-1, 2)
 
@@ -170,7 +158,7 @@ class DSNet(nn.Module):
     def predict(self, seq):
         seq_len = seq.shape[1]
         pred_cls, pred_loc = self(seq)
-
+        # print("pred_loc", pred_loc)
         pred_cls = pred_cls.cpu().numpy().reshape(-1)
         pred_loc = pred_loc.cpu().numpy().reshape((-1, 2))
 
@@ -315,9 +303,11 @@ class BboxHelper:
     def nms(scores: np.ndarray, bboxes: np.ndarray, thresh: float) -> Tuple[np.ndarray, np.ndarray]:
 
         valid_idx = bboxes[:, 0] < bboxes[:, 1]
+        # print(valid_idx)
+        # print("scores", scores)
+        # print("bboxes", bboxes)
         scores = scores[valid_idx]
         bboxes = bboxes[valid_idx]
-
         arg_desc = scores.argsort()[::-1]
 
         scores_remain = scores[arg_desc]
@@ -454,9 +444,8 @@ def evaluate(model, val_loader, nms_thresh, device):
             seq_len = len(seq)
             seq_torch = torch.from_numpy(seq).unsqueeze(0).to(device)
             # print(model)
-            pred_cls, pred_bboxes = model.predict(seq_torch) 
+            pred_cls, pred_bboxes = model.predict(seq_torch)
             pred_bboxes = np.clip(pred_bboxes, 0, seq_len).round().astype(np.int32)
-
             pred_cls, pred_bboxes = BboxHelper.nms(pred_cls, pred_bboxes, nms_thresh)
             pred_summ = VSummHelper.bbox2summary(seq_len, pred_cls, pred_bboxes, cps, n_frames, nfps, picks)
 
@@ -466,7 +455,7 @@ def evaluate(model, val_loader, nms_thresh, device):
             diversity = VSummHelper.get_summ_diversity(pred_summ, seq)
             stats.update(fscore=fscore, diversity=diversity)
 
-    return stats.fscore, stats.diversity
+    return stats.fscore
 
 
 args = Parameter()
@@ -479,7 +468,7 @@ for split_path in args.splits:
     split_path = Path(split_path)
     splits = DataHelper.load_yaml(split_path)
 
-    stats = AverageMeter('fscore', 'diversity')
+    stats = AverageMeter('fscore')
     for split_idx, split in enumerate(splits):
         ckpt_path = DataHelper.get_ckpt_path(args.model_dir, split_path, split_idx)
         state_dict = torch.load(str(ckpt_path),map_location=lambda storage, loc: storage)
@@ -487,9 +476,9 @@ for split_path in args.splits:
         val_set = VideoDataset(split['test_keys'])
         val_loader = DataLoader(val_set, shuffle=False)   
 
-        fscore, diversity = evaluate(model, val_loader, args.nms_thresh, args.device)
+        fscore  = evaluate(model, val_loader, args.nms_thresh, args.device)
            
-        stats.update(fscore=fscore, diversity=diversity)
-        print(f'{split_path.stem} split {split_idx}: diversity: ' f'{diversity:.4f}, F-score: {fscore:.4f}')
+        stats.update(fscore=fscore)
+        print(f'{split_path.stem} split {split_idx}:  F-score: {fscore:.4f}')
 
-    print(f'{split_path.stem}: diversity: {stats.diversity:.4f}, ' f'F-score: {stats.fscore:.4f}')
+    print(f'{split_path.stem}: ' f'F-score: {stats.fscore:.4f}')
