@@ -398,22 +398,6 @@ class VSummHelper:
         return pred_summ
 
 
-    def get_summ_diversity(pred_summ, features):
-        assert len(pred_summ) == len(features)
-        pred_summ = np.asarray(pred_summ, dtype=np.bool)
-        pos_features = features[pred_summ]
-
-        if len(pos_features) < 2:
-            return 0.0
-
-        diversity = 0.0
-        for feat in pos_features:
-            diversity += (feat * pos_features).sum() - (feat * feat).sum()
-
-        diversity /= len(pos_features) * (len(pos_features) - 1)
-        return diversity
-
-
     def get_summ_f1score(pred_summ, test_summ, eval_metric = 'avg'):
 
         pred_summ = np.asarray(pred_summ, dtype=np.bool)
@@ -437,7 +421,7 @@ class VSummHelper:
 
 def evaluate(model, val_loader, nms_thresh, device):
     model.eval()
-    stats = AverageMeter('fscore', 'diversity')
+    stats = AverageMeter('fscore')
 
     with torch.no_grad():
         for test_key, seq, _, cps, n_frames, nfps, picks, user_summary in val_loader:
@@ -452,15 +436,13 @@ def evaluate(model, val_loader, nms_thresh, device):
             eval_metric = 'avg' if 'tvsum' in test_key else 'max'
             fscore = VSummHelper.get_summ_f1score(pred_summ, user_summary, eval_metric)
             pred_summ = VSummHelper.downsample_summ(pred_summ)
-            diversity = VSummHelper.get_summ_diversity(pred_summ, seq)
-            stats.update(fscore=fscore, diversity=diversity)
+            stats.update(fscore=fscore)
 
     return stats.fscore
 
 
 args = Parameter()
 model = DSNet(args.base_model, args.num_feature, args.num_hidden, args.anchor_scales, args.num_head)
-
 model = model.eval().to(args.device)
 
 
