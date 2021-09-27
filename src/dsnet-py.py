@@ -75,8 +75,11 @@ class ScaledDotProductAttention(nn.Module):
         self.sqrt_d_k = math.sqrt(d_k)
 
     def forward(self, Q, K, V):
+        
         attn = torch.bmm(Q, K.transpose(2, 1))
+        # print("attn: ",attn.shape)
         attn = attn / self.sqrt_d_k
+        # print("scaled attn: ",attn.shape)
 
         attn = torch.softmax(attn, dim=-1)
         attn = self.dropout(attn)
@@ -101,16 +104,18 @@ class AttentionExtractor(nn.Module):
             nn.Dropout(0.5)
         )
 
-    def forward(self, *x):
-        x = x[0]
+    def forward(self, x):
         _, seq_len, num_feature = x.shape  # [1, seq_len, 1024]
         K = self.K(x)  # [1, seq_len, 1024]
         Q = self.Q(x)  # [1, seq_len, 1024]
         V = self.V(x)  # [1, seq_len, 1024]
 
-        K = K.view(1, seq_len, self.num_head, self.d_k).permute(2, 0, 1, 3).contiguous().view(self.num_head, seq_len, self.d_k)
-        Q = Q.view(1, seq_len, self.num_head, self.d_k).permute(2, 0, 1, 3).contiguous().view(self.num_head, seq_len, self.d_k)
-        V = V.view(1, seq_len, self.num_head, self.d_k).permute(2, 0, 1, 3).contiguous().view(self.num_head, seq_len, self.d_k)
+        K = K.view(1, seq_len, self.num_head, self.d_k).permute(2, 0, 1, 3).view(self.num_head, seq_len, self.d_k)
+        Q = Q.view(1, seq_len, self.num_head, self.d_k).permute(2, 0, 1, 3).view(self.num_head, seq_len, self.d_k)
+        V = V.view(1, seq_len, self.num_head, self.d_k).permute(2, 0, 1, 3).view(self.num_head, seq_len, self.d_k)
+        # print("K: ",K.shape)
+        # print("Q: ",Q.shape)
+        # print("V: ",V.shape)
 
         y, attn = self.attention(Q, K, V)  # [num_head, seq_len, d_k]
         y = y.view(1, self.num_head, seq_len, self.d_k).permute(0, 2, 1, 3).contiguous().view(1, seq_len, num_feature)
@@ -140,13 +145,20 @@ class DSNet(nn.Module):
 
     def forward(self, x):
         _, seq_len, _ = x.shape
+        # print("0 GoogleNet Features(v): ",x.shape)
         out = self.base_model(x)
+        # print("1 Temporal Layer Featurs(w): ",out.shape)
         out = out + x
+        # print("2 Final Features(x): ", out.shape)
         out = self.layer_norm(out)
-
+        # print("3 After Layer Norm: ",out.shape)
         out = out.transpose(2, 1)
+        # print("4 After Transpose: ",out.shape)
         pool_results = [roi_pooling(out) for roi_pooling in self.roi_poolings]
+        # print("5 After AvgPooling: ",len(pool_results), len(pool_results[0]), len(pool_results[0][0]), len(pool_results[0][0][0]))
+    
         out = torch.cat(pool_results, dim=0).permute(2, 0, 1)[:-1]
+        # print("6 After ConCat: ",out.shape)
 
         out = self.fc1(out)
 
@@ -441,10 +453,11 @@ def evaluate(model, val_loader, nms_thresh, device):
         for test_key, seq, _, cps, n_frames, nfps, picks, user_summary in val_loader:
             seq_len = len(seq)
             seq_torch = torch.from_numpy(seq).unsqueeze(0).to(device)
-            pred_cls, pred_bboxes = model.predict(seq_torch)
+            # print(model)
+            pred_cls, pred_bboxes = model.predict(seq_torch) 
             pred_bboxes = np.clip(pred_bboxes, 0, seq_len).round().astype(np.int32)
-            pred_cls, pred_bboxes = BboxHelper.nms(pred_cls, pred_bboxes, nms_thresh)
 
+            pred_cls, pred_bboxes = BboxHelper.nms(pred_cls, pred_bboxes, nms_thresh)
             pred_summ = VSummHelper.bbox2summary(seq_len, pred_cls, pred_bboxes, cps, n_frames, nfps, picks)
 
             eval_metric = 'avg' if 'tvsum' in test_key else 'max'
@@ -458,8 +471,9 @@ def evaluate(model, val_loader, nms_thresh, device):
 
 args = Parameter()
 model = DSNet(args.base_model, args.num_feature, args.num_hidden, args.anchor_scales, args.num_head)
+
 model = model.eval().to(args.device)
-# model = model.train(False).to(args.device)
+
 
 for split_path in args.splits:
     split_path = Path(split_path)
@@ -473,7 +487,8 @@ for split_path in args.splits:
         val_set = VideoDataset(split['test_keys'])
         val_loader = DataLoader(val_set, shuffle=False)   
 
-        fscore, diversity = evaluate(model, val_loader, args.nms_thresh, args.device)        
+        fscore, diversity = evaluate(model, val_loader, args.nms_thresh, args.device)
+           
         stats.update(fscore=fscore, diversity=diversity)
         print(f'{split_path.stem} split {split_idx}: diversity: ' f'{diversity:.4f}, F-score: {fscore:.4f}')
 
