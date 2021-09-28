@@ -5,7 +5,6 @@ import yaml
 import h5py
 from torch import nn
 from pathlib import Path
-from typing import List, Tuple, Iterable
 from ortools.algorithms.pywrapknapsack_solver import KnapsackSolver
 
 class DataHelper:
@@ -144,8 +143,10 @@ class DSNet(nn.Module):
         # print("4 After Transpose: ",out.shape)
         pool_results = [roi_pooling(out) for roi_pooling in self.roi_poolings]
         # print("5 After AvgPooling: ",len(pool_results), len(pool_results[0]), len(pool_results[0][0]), len(pool_results[0][0][0]))
-    
+        # print("5 After AvgPooling: ",pool_results)
         out = torch.cat(pool_results, dim=0).permute(2, 0, 1)[:-1]
+        
+
         # print("6 After ConCat: ",out.shape)
 
         out = self.fc1(out)
@@ -250,7 +251,7 @@ class VideoDataset:
         return datasets
 
 class DataLoader:
-    def __init__(self, dataset: VideoDataset, shuffle: bool):
+    def __init__(self, dataset, shuffle):
         self.dataset = dataset
         self.shuffle = shuffle
         self.data_idx = list(range(len(self.dataset)))
@@ -277,13 +278,7 @@ class BboxHelper:
         bbox_lr = np.vstack((left, right)).T
         return bbox_lr
 
-    def iou_lr(anchor_bbox, target_bbox) -> np.ndarray:
-        """Compute iou between multiple LR bbox pairs.
-
-        :param anchor_bbox: LR anchor bboxes. Sized [N, 2].
-        :param target_bbox: LR target bboxes. Sized [N, 2].
-        :return: IoU between each bbox pair. Sized [N].
-        """
+    def iou_lr(anchor_bbox, target_bbox):
         anchor_left, anchor_right = anchor_bbox[:, 0], anchor_bbox[:, 1]
         target_left, target_right = target_bbox[:, 0], target_bbox[:, 1]
 
@@ -300,7 +295,7 @@ class BboxHelper:
         iou = intersect / union
         return iou
 
-    def nms(scores: np.ndarray, bboxes: np.ndarray, thresh: float) -> Tuple[np.ndarray, np.ndarray]:
+    def nms(scores, bboxes, thresh):
 
         valid_idx = bboxes[:, 0] < bboxes[:, 1]
         # print(valid_idx)
@@ -444,7 +439,6 @@ def evaluate(model, val_loader, nms_thresh, device):
 args = Parameter()
 model = DSNet(args.base_model, args.num_feature, args.num_hidden, args.anchor_scales, args.num_head)
 model = model.eval().to(args.device)
-
 
 for split_path in args.splits:
     split_path = Path(split_path)
