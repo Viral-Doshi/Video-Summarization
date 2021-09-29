@@ -22,25 +22,32 @@ Install python dependencies.
 pip install -r requirements.txt
 ```
 
-## Datasets Preparation
 
-Download the pre-processed datasets into `datasets/` folder, including [TVSum](https://github.com/yalesong/tvsum), [SumMe](https://gyglim.github.io/me/vsum/index.html), [OVP](https://sites.google.com/site/vsummsite/download), and [YouTube](https://sites.google.com/site/vsummsite/download) datasets.
+Install cuda enabled pytorch.
+For other versions of cuda, select command from [here](https://pytorch.org/).
 
 ```sh
-mkdir -p datasets/ && cd datasets/
+conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c conda-forge
+```
+
+## Datasets
+
+Download the pre-processed datasets into `datasets/` folder.
+
+```sh
+mkdir datasets/
+cd datasets/
 wget https://www.dropbox.com/s/tdknvkpz1jp6iuz/dsnet_datasets.zip
 unzip dsnet_datasets.zip
 ```
+Download and extraction can be done manually.
+Download [link](https://www.dropbox.com/s/tdknvkpz1jp6iuz/dsnet_datasets.zip).
 
-If the Dropbox link is unavailable to you, try downloading from below links.
-
-+ (Baidu Cloud) Link: https://pan.baidu.com/s/1LUK2aZzLvgNwbK07BUAQRQ Extraction Code: x09b
-+ (Google Drive) https://drive.google.com/file/d/11ulsvk1MZI7iDqymw9cfL7csAYS0cDYH/view?usp=sharing
 
 Now the datasets structure should look like
 
 ```
-DSNet
+Video-Summarization
 └── datasets/
     ├── eccv16_dataset_ovp_google_pool5.h5
     ├── eccv16_dataset_summe_google_pool5.h5
@@ -51,16 +58,21 @@ DSNet
 
 ## Pre-trained Models
 
-Our pre-trained models are now available online. You may download them for evaluation, or you may skip this section and train a new one from scratch.
+Pre-trained model can also be downloaded.
 
 ```sh
-mkdir -p models && cd models
-# anchor-based model
+mkdir models
+cd models
 wget https://www.dropbox.com/s/0jwn4c1ccjjysrz/pretrain_ab_basic.zip
 unzip pretrain_ab_basic.zip
-# anchor-free model
-wget https://www.dropbox.com/s/2hjngmb0f97nxj0/pretrain_af_basic.zip
-unzip pretrain_af_basic.zip
+```
+Download [link](https://www.dropbox.com/s/0jwn4c1ccjjysrz/pretrain_ab_basic.zip).
+It can be done manually as well.
+
+```
+Video-Summarization
+└── models/
+    └── pretrain_ab_basic
 ```
 
 To evaluate our pre-trained models, type:
@@ -72,12 +84,11 @@ python evaluate.py anchor-based --model-dir ../models/pretrain_ab_basic/ --split
 python evaluate.py anchor-free --model-dir ../models/pretrain_af_basic/ --splits ../splits/tvsum.yml ../splits/summe.yml --nms-thresh 0.4
 ```
 
-If everything works fine, you will get similar F-score results as follows.
+You will get a F-score results as follows.
 
 |              | TVSum | SumMe |
 | ------------ | ----- | ----- |
 | Anchor-based | 62.05 | 50.19 |
-| Anchor-free  | 61.86 | 51.18 |
 
 ## Training
 
