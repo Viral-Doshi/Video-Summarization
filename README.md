@@ -72,7 +72,7 @@ It can be done manually as well.
 ```
 Video-Summarization
 └── models/
-    └── pretrain_ab_basic
+    └── pretrain_ab_basic/
 ```
 
 To evaluate our pre-trained models, type:
