@@ -207,14 +207,6 @@ class Parameter:
         self.cls_loss = 'focal'
         self.reg_loss = 'soft-iou'
 
-    def get_model(self):
-        if self.model == 'anchor-based':
-            return DSNet(self.base_model, self.num_feature, self.num_hidden, self.anchor_scales, self.num_head)
-        elif self.model == 'anchor-free':
-            return DSNetAF(self.base_model, self.num_feature, self.num_hidden, self.num_head)
-        else:
-            print(f'Invalid model type {self.model_type}')
-
 class VideoDataset:
     def __init__(self, keys):
         self.keys = keys
