@@ -79,9 +79,8 @@ To evaluate our pre-trained models, type:
 
 ```sh
 # evaluate anchor-based model
-python evaluate.py anchor-based --model-dir ../models/pretrain_ab_basic/ --splits ../splits/tvsum.yml ../splits/summe.yml
-# evaluate anchor-free model
-python evaluate.py anchor-free --model-dir ../models/pretrain_af_basic/ --splits ../splits/tvsum.yml ../splits/summe.yml --nms-thresh 0.4
+# cd to src folder and run
+python dsnet-py.py
 ```
 
 You will get a F-score results as follows.
