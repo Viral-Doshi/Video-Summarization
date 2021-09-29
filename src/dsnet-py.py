@@ -100,9 +100,6 @@ class AttentionExtractor(nn.Module):
         K = K.view(1, seq_len, self.num_head, self.d_k).permute(2, 0, 1, 3).view(self.num_head, seq_len, self.d_k)
         Q = Q.view(1, seq_len, self.num_head, self.d_k).permute(2, 0, 1, 3).view(self.num_head, seq_len, self.d_k)
         V = V.view(1, seq_len, self.num_head, self.d_k).permute(2, 0, 1, 3).view(self.num_head, seq_len, self.d_k)
-        # print("K: ",K.shape)
-        # print("Q: ",Q.shape)
-        # print("V: ",V.shape)
 
         y, attn = self.attention(Q, K, V)  # [num_head, seq_len, d_k]
         y = y.view(1, self.num_head, seq_len, self.d_k).permute(0, 2, 1, 3).contiguous().view(1, seq_len, num_feature)
@@ -143,10 +140,7 @@ class DSNet(nn.Module):
         # print("4 After Transpose: ",out.shape)
         pool_results = [roi_pooling(out) for roi_pooling in self.roi_poolings]
         # print("5 After AvgPooling: ",len(pool_results), len(pool_results[0]), len(pool_results[0][0]), len(pool_results[0][0][0]))
-        # print("5 After AvgPooling: ",pool_results)
         out = torch.cat(pool_results, dim=0).permute(2, 0, 1)[:-1]
-        
-
         # print("6 After ConCat: ",out.shape)
 
         out = self.fc1(out)
@@ -176,36 +170,15 @@ class Parameter:
         
         self.model = 'anchor-based'
         self.device = "cuda"
-        self.seed = 12345
         self.splits = ["../splits/tvsum.yml", "../splits/summe.yml"]
-        self.max_epoch = 300
         self.model_dir = "../models/pretrain_ab_basic/"
-        self.log_file = "log.txt"
-        self.lr = 5e-5
-        self.weight_decay = 1e-5
-        self.lambda_reg = 1.0
         self.nms_thresh = 0.5
-
         self.ckpt_path = None
-        self.sample_rate = 15
-        self.source = None
-        self.save_path = None
-
         self.base_model = 'attention'
         self.num_head = 8
         self.num_feature = 1024
         self.num_hidden = 128
-
-        self.neg_sample_ratio = 2.0
-        self.incomplete_sample_ratio = 1.0
-        self.pos_iou_thresh = 0.6
-        self.neg_iou_thresh = 0.0
-        self.incomplete_iou_thresh = 0.3
         self.anchor_scales = [4,8,16,32]
-
-        self.lambda_ctr = 1.0
-        self.cls_loss = 'focal'
-        self.reg_loss = 'soft-iou'
 
 class VideoDataset:
     def __init__(self, keys):
@@ -290,9 +263,6 @@ class BboxHelper:
     def nms(scores, bboxes, thresh):
 
         valid_idx = bboxes[:, 0] < bboxes[:, 1]
-        # print(valid_idx)
-        # print("scores", scores)
-        # print("bboxes", bboxes)
         scores = scores[valid_idx]
         bboxes = bboxes[valid_idx]
         arg_desc = scores.argsort()[::-1]
