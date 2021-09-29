@@ -1,15 +1,15 @@
 # Video-Summarization
 ## Getting Started
 
-This project is developed on Ubuntu 16.04 with CUDA 9.0.176.
+This project is developed on Windows with CUDA 11.1.
 
 First, clone this project to your local environment.
 
 ```sh
-git clone https://github.com/li-plus/DSNet.git
+git clone https://github.com/Viral-Doshi/Video-Summarization.git
 ```
 
-Create a virtual environment with python 3.6, preferably using [Anaconda](https://www.anaconda.com/).
+Create a virtual environment with python 3.6, preferably using Anaconda.
 
 ```sh
 conda create --name dsnet python=3.6
