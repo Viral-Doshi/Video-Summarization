@@ -170,8 +170,8 @@ class Parameter:
         
         self.model = 'anchor-based'
         self.device = "cuda"
-        self.splits = ["../splits/tvsum.yml", "../splits/summe.yml"]
-        self.model_dir = "../models/pretrain_ab_basic/"
+        self.splits = ["../data/splits/tvsum.yml", "../data/splits/summe.yml"]
+        self.model_dir = "../data/models/pretrain_ab_basic/"
         self.nms_thresh = 0.5
         self.ckpt_path = None
         self.base_model = 'attention'
@@ -417,6 +417,6 @@ for split_path in args.splits:
         fscore  = evaluate(model, val_loader, args.nms_thresh, args.device)
            
         stats.update(fscore=fscore)
-        print(f'{split_path.stem} split {split_idx}:  F-score: {fscore:.4f}')
+        print(f'{split_path} split {split_idx}:  F-score: {fscore:.4f}')
 
-    print(f'{split_path.stem}: ' f'F-score: {stats.fscore:.4f}')
+    print(f'{split_path}: ' f'F-score: {stats.fscore:.4f}')
