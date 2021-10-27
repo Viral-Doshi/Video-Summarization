@@ -1,0 +1,41 @@
+[2021-09-25 12:54:54,809] {'model': 'anchor-based', 'device': 'cuda', 'seed': 12345, 'splits': ['../splits/tvsum.yml', '../splits/summe.yml'], 'max_epoch': 300, 'model_dir': '../models/pretrain_ab_basic/', 'log_file': 'log.txt', 'lr': 5e-05, 'weight_decay': 1e-05, 'lambda_reg': 1.0, 'nms_thresh': 0.5, 'ckpt_path': None, 'sample_rate': 15, 'source': None, 'save_path': None, 'base_model': 'attention', 'num_head': 8, 'num_feature': 1024, 'num_hidden': 128, 'neg_sample_ratio': 2.0, 'incomplete_sample_ratio': 1.0, 'pos_iou_thresh': 0.6, 'neg_iou_thresh': 0.0, 'incomplete_iou_thresh': 0.3, 'anchor_scales': [4, 8, 16, 32], 'lambda_ctr': 1.0, 'cls_loss': 'focal', 'reg_loss': 'soft-iou'}
+[2021-09-25 12:54:57,627] tvsum split 0: diversity: 0.5027, F-score: 0.6447
+[2021-09-25 12:54:57,954] tvsum split 1: diversity: 0.4912, F-score: 0.5847
+[2021-09-25 12:54:58,291] tvsum split 2: diversity: 0.4664, F-score: 0.6404
+[2021-09-25 12:54:58,737] tvsum split 3: diversity: 0.4447, F-score: 0.6092
+[2021-09-25 12:54:59,078] tvsum split 4: diversity: 0.4767, F-score: 0.6234
+[2021-09-25 12:54:59,078] tvsum: diversity: 0.4763, F-score: 0.6205
+[2021-09-25 12:54:59,242] summe split 0: diversity: 0.6149, F-score: 0.4728
+[2021-09-25 12:54:59,360] summe split 1: diversity: 0.6199, F-score: 0.5216
+[2021-09-25 12:54:59,444] summe split 2: diversity: 0.7063, F-score: 0.5427
+[2021-09-25 12:54:59,553] summe split 3: diversity: 0.5908, F-score: 0.5224
+[2021-09-25 12:54:59,698] summe split 4: diversity: 0.6801, F-score: 0.4501
+[2021-09-25 12:54:59,699] summe: diversity: 0.6424, F-score: 0.5019
+[2021-09-25 13:31:38,905] {'model': 'anchor-based', 'device': 'cuda', 'seed': 12345, 'splits': ['../splits/tvsum.yml', '../splits/summe.yml'], 'max_epoch': 300, 'model_dir': '../models/pretrain_ab_basic/', 'log_file': 'log.txt', 'lr': 5e-05, 'weight_decay': 1e-05, 'lambda_reg': 1.0, 'nms_thresh': 0.5, 'ckpt_path': None, 'sample_rate': 15, 'source': None, 'save_path': None, 'base_model': 'attention', 'num_head': 8, 'num_feature': 1024, 'num_hidden': 128, 'neg_sample_ratio': 2.0, 'incomplete_sample_ratio': 1.0, 'pos_iou_thresh': 0.6, 'neg_iou_thresh': 0.0, 'incomplete_iou_thresh': 0.3, 'anchor_scales': [4, 8, 16, 32], 'lambda_ctr': 1.0, 'cls_loss': 'focal', 'reg_loss': 'soft-iou'}
+[2021-09-25 13:31:42,893] tvsum split 0: diversity: 0.5027, F-score: 0.6447
+[2021-09-25 13:31:43,396] tvsum split 1: diversity: 0.4912, F-score: 0.5847
+[2021-09-25 13:31:43,898] tvsum split 2: diversity: 0.4664, F-score: 0.6404
+[2021-09-25 13:31:44,546] tvsum split 3: diversity: 0.4447, F-score: 0.6092
+[2021-09-25 13:31:45,066] tvsum split 4: diversity: 0.4767, F-score: 0.6234
+[2021-09-25 13:31:45,066] tvsum: diversity: 0.4763, F-score: 0.6205
+[2021-09-25 13:31:45,301] summe split 0: diversity: 0.6149, F-score: 0.4728
+[2021-09-25 13:31:45,471] summe split 1: diversity: 0.6199, F-score: 0.5216
+[2021-09-25 13:31:45,596] summe split 2: diversity: 0.7063, F-score: 0.5427
+[2021-09-25 13:31:45,761] summe split 3: diversity: 0.5908, F-score: 0.5224
+[2021-09-25 13:31:46,001] summe split 4: diversity: 0.6801, F-score: 0.4501
+[2021-09-25 13:31:46,001] summe: diversity: 0.6424, F-score: 0.5019
+[2021-09-25 13:32:26,665] {'model': 'anchor-based', 'device': 'cuda', 'seed': 12345, 'splits': ['../splits/tvsum.yml', '../splits/summe.yml'], 'max_epoch': 300, 'model_dir': '../models/pretrain_ab_basic/', 'log_file': 'log.txt', 'lr': 5e-05, 'weight_decay': 1e-05, 'lambda_reg': 1.0, 'nms_thresh': 0.5, 'ckpt_path': None, 'sample_rate': 15, 'source': None, 'save_path': None, 'base_model': 'attention', 'num_head': 8, 'num_feature': 1024, 'num_hidden': 128, 'neg_sample_ratio': 2.0, 'incomplete_sample_ratio': 1.0, 'pos_iou_thresh': 0.6, 'neg_iou_thresh': 0.0, 'incomplete_iou_thresh': 0.3, 'anchor_scales': [4, 8, 16, 32], 'lambda_ctr': 1.0, 'cls_loss': 'focal', 'reg_loss': 'soft-iou'}
+[2021-09-25 13:32:30,736] tvsum split 0: diversity: 0.5027, F-score: 0.6447
+[2021-09-25 13:32:31,247] tvsum split 1: diversity: 0.4912, F-score: 0.5847
+[2021-09-25 13:32:31,771] tvsum split 2: diversity: 0.4664, F-score: 0.6404
+[2021-09-25 13:32:32,466] tvsum split 3: diversity: 0.4447, F-score: 0.6092
+[2021-09-25 13:32:32,996] tvsum split 4: diversity: 0.4767, F-score: 0.6234
+[2021-09-25 13:32:32,996] tvsum: diversity: 0.4763, F-score: 0.6205
+[2021-09-25 13:32:33,218] summe split 0: diversity: 0.6149, F-score: 0.4728
+[2021-09-25 13:32:33,386] summe split 1: diversity: 0.6199, F-score: 0.5216
+[2021-09-25 13:32:33,517] summe split 2: diversity: 0.7063, F-score: 0.5427
+[2021-09-25 13:32:33,676] summe split 3: diversity: 0.5908, F-score: 0.5224
+[2021-09-25 13:32:33,895] summe split 4: diversity: 0.6801, F-score: 0.4501
+[2021-09-25 13:32:33,897] summe: diversity: 0.6424, F-score: 0.5019
+[2021-09-25 13:32:55,911] {'model': 'anchor-based', 'device': 'cuda', 'seed': 12345, 'splits': ['../splits/tvsum.yml', '../splits/summe.yml'], 'max_epoch': 300, 'model_dir': '../models/pretrain_ab_basic/', 'log_file': 'log.txt', 'lr': 5e-05, 'weight_decay': 1e-05, 'lambda_reg': 1.0, 'nms_thresh': 0.5, 'ckpt_path': None, 'sample_rate': 15, 'source': None, 'save_path': None, 'base_model': 'attention', 'num_head': 8, 'num_feature': 1024, 'num_hidden': 128, 'neg_sample_ratio': 2.0, 'incomplete_sample_ratio': 1.0, 'pos_iou_thresh': 0.6, 'neg_iou_thresh': 0.0, 'incomplete_iou_thresh': 0.3, 'anchor_scales': [4, 8, 16, 32], 'lambda_ctr': 1.0, 'cls_loss': 'focal', 'reg_loss': 'soft-iou'}
+[2021-09-25 13:33:25,602] {'model': 'anchor-based', 'device': 'cuda', 'seed': 12345, 'splits': ['../splits/tvsum.yml', '../splits/summe.yml'], 'max_epoch': 300, 'model_dir': '../models/pretrain_ab_basic/', 'log_file': 'log.txt', 'lr': 5e-05, 'weight_decay': 1e-05, 'lambda_reg': 1.0, 'nms_thresh': 0.5, 'ckpt_path': None, 'sample_rate': 15, 'source': None, 'save_path': None, 'base_model': 'attention', 'num_head': 8, 'num_feature': 1024, 'num_hidden': 128, 'neg_sample_ratio': 2.0, 'incomplete_sample_ratio': 1.0, 'pos_iou_thresh': 0.6, 'neg_iou_thresh': 0.0, 'incomplete_iou_thresh': 0.3, 'anchor_scales': [4, 8, 16, 32], 'lambda_ctr': 1.0, 'cls_loss': 'focal', 'reg_loss': 'soft-iou'}
