@@ -89,11 +89,3 @@ You will get a F-score results as follows.
 | ------------ | ----- | ----- |
 | Anchor-based | 62.05 | 50.19 |
 
-### Inference
-
-To predict the summary of a raw video, use `infer.py`. For example, run
-
-```sh
-python infer.py anchor-based --ckpt-path ../models/custom/checkpoint/custom.yml.0.pt \
-  --source ../custom_data/videos/EE-bNr36nyA.mp4 --save-path ./output.mp4
-```
