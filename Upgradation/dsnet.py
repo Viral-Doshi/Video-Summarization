@@ -55,41 +55,7 @@ class AnchorHelper:
         bbox = np.vstack((bbox_center, bbox_width)).T
         return bbox
 
-class ScaledDotProductAttention(nn.Module):
-    def __init__(self, d_k):
-        super().__init__()
-        self.dropout = nn.Dropout(0.5)
-        self.sqrt_d_k = math.sqrt(d_k)
 
-    def forward(self, Q, K, V):
-        
-        attn = torch.bmm(Q, K.transpose(2, 1))
-        # print("attn: ",attn.shape)
-        attn = attn / self.sqrt_d_k
-        # print("scaled attn: ",attn.shape)
-
-        attn = torch.softmax(attn, dim=-1)
-        attn = self.dropout(attn)
-        y = torch.bmm(attn, V)
-
-        return y, attn
-
-class AttentionExtractor(nn.Module):
-    def __init__(self, num_head=8, num_feature=1024):
-        super().__init__()
-        self.num_head = num_head
-
-        self.Q = nn.Linear(num_feature, num_feature, bias=False)
-        self.K = nn.Linear(num_feature, num_feature, bias=False)
-        self.V = nn.Linear(num_feature, num_feature, bias=False)
-
-        self.d_k = num_feature // num_head
-        self.attention = ScaledDotProductAttention(self.d_k)
-
-        self.fc = nn.Sequential(
-            nn.Linear(num_feature, num_feature, bias=False),
-            nn.Dropout(0.5)
-        )
 
     def forward(self, x):
         _, seq_len, num_feature = x.shape  # [1, seq_len, 1024]
@@ -113,7 +79,7 @@ class DSNet(nn.Module):
         super().__init__()
         self.anchor_scales = anchor_scales
         self.num_scales = len(anchor_scales)
-        self.base_model = AttentionExtractor(num_head, num_feature)
+        self.base_model = nn.LSTM(num_feature, num_feature // 2, bidirectional=True)
 
         self.roi_poolings = [nn.AvgPool1d(scale, stride=1, padding=scale // 2) for scale in anchor_scales]
 
@@ -130,7 +96,7 @@ class DSNet(nn.Module):
     def forward(self, x):
         _, seq_len, _ = x.shape
         # print("0 GoogleNet Features(v): ",x.shape)
-        out = self.base_model(x)
+        out, _ = self.base_model(x)
         # print("1 Temporal Layer Featurs(w): ",out.shape)
         out = out + x
         # print("2 Final Features(x): ", out.shape)
@@ -170,15 +136,15 @@ class Parameter:
         
         self.model = 'anchor-based'
         self.device = "cuda"
-        self.splits = ["../data/splits/tvsum.yml", "../data/splits/summe.yml"]
-        self.model_dir = "../data/models/pretrain_ab_basic/"
+        self.splits = ["../data/splits/summe.yml"]
+        self.model_dir = "../data/models/pretrain_ab_basic_upgrade/"
         self.nms_thresh = 0.5
         self.ckpt_path = None
-        self.base_model = 'attention'
+        self.base_model = 'bilstm'
         self.num_head = 8
         self.num_feature = 1024
         self.num_hidden = 128
-        self.anchor_scales = [4,8,16,32]
+        self.anchor_scales = [8,16,32,64]
 
 class VideoDataset:
     def __init__(self, keys):
@@ -396,7 +362,6 @@ def evaluate(model, val_loader, nms_thresh, device):
             stats.update(fscore=fscore)
 
     return stats.fscore
-
 
 args = Parameter()
 model = DSNet(args.base_model, args.num_feature, args.num_hidden, args.anchor_scales, args.num_head)

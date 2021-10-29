@@ -170,7 +170,7 @@ class Parameter:
         
         self.model = 'anchor-based'
         self.device = "cuda"
-        self.splits = ["../data/splits/tvsum.yml", "../data/splits/summe.yml"]
+        self.splits = ["../data/splits/summe.yml"]
         self.model_dir = "../data/models/pretrain_ab_basic/"
         self.nms_thresh = 0.5
         self.ckpt_path = None
@@ -396,7 +396,6 @@ def evaluate(model, val_loader, nms_thresh, device):
             stats.update(fscore=fscore)
 
     return stats.fscore
-
 
 args = Parameter()
 model = DSNet(args.base_model, args.num_feature, args.num_hidden, args.anchor_scales, args.num_head)
